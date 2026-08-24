@@ -117,7 +117,5 @@ The system analyzes the following features to generate predictions:
 *Disclaimer: This tool is for research and portfolio demonstration purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment.*
 
 ```
+<img width="1280" height="721" alt="dashboard" src="https://github.com/user-attachments/assets/a42e3e0d-5d80-4315-88cd-1edfd2369d66" />
 
-## 🖥️ Live Diagnostic Dashboard
-> *Real-time inference and SHAP cryptographic feature attribution deployed via FastAPI.*
-![NeuroAI Dashboard](dashboard.png)
