@@ -117,4 +117,27 @@ The system analyzes the following features to generate predictions:
 *Disclaimer: This tool is for research and portfolio demonstration purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment.*
 
 ```
+## 🖥️ Live Diagnostic Dashboard
+> *Real-time inference and SHAP cryptographic feature attribution deployed via FastAPI.*
+
+<img src="dashboard.png" alt="NeuroAI Dashboard" width="800">
+
+---
+
+
+### Detailed Evaluation Metrics & Terminal Logs
+
+**1. Random Forest & Logistic Regression**
+<img src="Screenshot 2026-08-24 at 3.13.05 PM.png" width="600">
+
+**2. XGBoost**
+<img src="XGBoost.png" width="600">
+
+**3. Fine-Tuned BERT (Sequence Classifier)**
+<img src="Bert.png" width="600">
+
+**4. Support Vector Machine (RBF)**
+<img src="SVM training.png" width="600">
+
+---
 
