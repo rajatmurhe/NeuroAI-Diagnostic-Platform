@@ -14,7 +14,7 @@ This project bridges the gap between traditional tabular Machine Learning and mo
 ## 🖥️ Live Diagnostic Dashboard
 > *Real-time inference and SHAP cryptographic feature attribution deployed via FastAPI.*
 
-<img src="dashboard.png" alt="NeuroAI Dashboard" width="800">
+![NeuroAI Dashboard](dashboard.png)
 
 ---
 
@@ -32,21 +32,19 @@ Evaluated on the OASIS Cross-Sectional MRI and Clinical dataset (stratified 80/2
 
 ### Detailed Evaluation Metrics
 
+### Detailed Evaluation Metrics
+
 **1. Random Forest & Logistic Regression**
-<br>
-<img src="Screenshot 2026-08-24 at 3.13.05 PM.png" width="600">
+![Random Forest & Logistic Regression](Screenshot%202026-08-24%20at%203.13.05%20PM.png)
 
 **2. XGBoost**
-<br>
-<img src="XGBoost.png" width="600">
+![XGBoost](XGBoost.png)
 
 **3. Fine-Tuned BERT (Sequence Classifier)**
-<br>
-<img src="Bert.png" width="600">
+![Fine-Tuned BERT](Bert.png)
 
 **4. Support Vector Machine (RBF)**
-<br>
-<img src="SVM training.png" width="600">
+![Support Vector Machine](SVM%20training.png)
 
 ---
 
