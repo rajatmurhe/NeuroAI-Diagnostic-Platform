@@ -1,4 +1,3 @@
-```markdown
 # 🧠 NeuroAI: Explainable Clinical Diagnostic Platform
 
 An end-to-end Artificial Intelligence diagnostic microservice built to predict cognitive impairment stages (**Cognitively Normal, Mild Cognitive Impairment, Alzheimer’s Disease**) from multimodal patient biomarkers. 
