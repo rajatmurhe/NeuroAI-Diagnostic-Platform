@@ -1,3 +1,4 @@
+```markdown
 # 🧠 NeuroAI: Explainable Clinical Diagnostic Platform
 
 An end-to-end Artificial Intelligence diagnostic microservice built to predict cognitive impairment stages (**Cognitively Normal, Mild Cognitive Impairment, Alzheimer’s Disease**) from multimodal patient biomarkers. 
@@ -11,16 +12,14 @@ This project bridges the gap between traditional tabular Machine Learning and mo
 
 ---
 
-## 🚀 Key Features
+## 🖥️ Live Diagnostic Dashboard
+> *Real-time inference and SHAP cryptographic feature attribution deployed via FastAPI.*
 
-* **Multi-Model Intelligence:** Compares traditional tree-based ensembles (Random Forest, XGBoost) and kernel methods (SVM) against a deep-learning Transformer (`bert-base-uncased`) fine-tuned via tabular serialization.
-* **Explainable AI (XAI):** Integrates **SHAP (SHapley Additive exPlanations)** to provide real-time, cryptographic feature attribution. Visualizes exactly how clinical biomarkers (e.g., Brain Volume, MMSE Score) push a diagnosis toward or away from cognitive impairment.
-* **Enterprise-Grade Microservice:** Powered by a highly concurrent **FastAPI** backend.
-* **Polished Frontend:** A responsive, dark-mode glassmorphism dashboard built with **Tailwind CSS** and asynchronous JavaScript.
+<img src="dashboard.png" alt="NeuroAI Dashboard" width="800">
 
 ---
 
-## 📊 Performance Benchmarks
+## 📊 Performance Benchmarks & Terminal Logs
 
 Evaluated on the OASIS Cross-Sectional MRI and Clinical dataset (stratified 80/20 split).
 
@@ -31,6 +30,24 @@ Evaluated on the OASIS Cross-Sectional MRI and Clinical dataset (stratified 80/2
 | **Logistic Regression** | Tabular ML | 82.95% | 82.28% |
 | **Fine-Tuned BERT** | Transformer Classifier | 81.82% | 82.35% |
 | **SVM (RBF Kernel)** | Kernel ML | 79.55% | 79.34% |
+
+### Detailed Evaluation Metrics
+
+**1. Random Forest & Logistic Regression**
+<br>
+<img src="Screenshot 2026-08-24 at 3.13.05 PM.png" width="600">
+
+**2. XGBoost**
+<br>
+<img src="XGBoost.png" width="600">
+
+**3. Fine-Tuned BERT (Sequence Classifier)**
+<br>
+<img src="Bert.png" width="600">
+
+**4. Support Vector Machine (RBF)**
+<br>
+<img src="SVM training.png" width="600">
 
 ---
 
@@ -79,13 +96,13 @@ pip install -r requirements.txt
 
 ```
 
-**3. Train the models (Optional but recommended)**
+**3. Train the models**
 *(Note: The fine-tuned BERT transformer weights are excluded from this repository due to GitHub storage limits. You can regenerate them locally.)*
 
 ```bash
 python3 src/preprocess.py
 python3 src/train_baseline.py
-python3 src/train_bert.py      # Takes ~25 mins on Apple Silicon (M1)
+python3 src/train_bert.py      
 
 ```
 
@@ -100,7 +117,7 @@ python3 api.py
 
 ---
 
-## 🧬 Clinical Biomarkers Utilized
+## Clinical Biomarkers Utilized
 
 The system analyzes the following features to generate predictions:
 
@@ -117,27 +134,5 @@ The system analyzes the following features to generate predictions:
 *Disclaimer: This tool is for research and portfolio demonstration purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment.*
 
 ```
-## 🖥️ Live Diagnostic Dashboard
-> *Real-time inference and SHAP cryptographic feature attribution deployed via FastAPI.*
 
-<img src="dashboard.png" alt="NeuroAI Dashboard" width="800">
-
----
-
-
-### Detailed Evaluation Metrics & Terminal Logs
-
-**1. Random Forest & Logistic Regression**
-<img src="Screenshot 2026-08-24 at 3.13.05 PM.png" width="600">
-
-**2. XGBoost**
-<img src="XGBoost.png" width="600">
-
-**3. Fine-Tuned BERT (Sequence Classifier)**
-<img src="Bert.png" width="600">
-
-**4. Support Vector Machine (RBF)**
-<img src="SVM training.png" width="600">
-
----
-
+```
