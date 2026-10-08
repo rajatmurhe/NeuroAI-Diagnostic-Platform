@@ -1,168 +1,1714 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeuroAI - Alzheimer's Diagnostic Platform</title>
+    <title>NeuroAI — Alzheimer's Diagnostic Intelligence Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        :root {
+            --bg-deep: #020817;
+            --bg-surface: #0d1526;
+            --bg-glass: rgba(13, 21, 38, 0.7);
+            --border-subtle: rgba(99, 179, 237, 0.12);
+            --border-active: rgba(99, 179, 237, 0.4);
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-violet: #8b5cf6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== STARFIELD CANVAS ===== */
+        #starfield {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ===== AMBIENT GLOW ORBS ===== */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+            animation: orbFloat 8s ease-in-out infinite;
+            z-index: 0;
+        }
+        .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, #3b82f6, transparent); top: -200px; left: -200px; animation-delay: 0s; }
+        .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, #8b5cf6, transparent); bottom: -150px; right: -150px; animation-delay: -4s; }
+        .orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, #06b6d4, transparent); top: 40%; left: 50%; transform: translateX(-50%); animation-delay: -2s; opacity: 0.08; }
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-40px) scale(1.05); }
+        }
+
+        /* ===== GLASSMORPHISM ===== */
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+        }
+        .glass:hover { border-color: var(--border-active); transition: border-color 0.3s ease; }
+
+        .glass-card {
+            background: rgba(15, 25, 50, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(99, 179, 237, 0.1);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover { border-color: rgba(99, 179, 237, 0.25); transform: translateY(-2px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: rgba(2, 8, 23, 0.85);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(99, 179, 237, 0.08);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #60a5fa, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 100px;
+            padding: 0.3rem 1rem;
+            font-size: 0.75rem;
+            color: #34d399;
+            font-weight: 500;
+        }
+        .status-dot {
+            width: 6px; height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            padding: 100px 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 100px;
+            padding: 0.35rem 1.1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #93c5fd;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.3rem, 5vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #93c5fd 40%, #06b6d4 70%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.05rem;
+            color: #94a3b8;
+            max-width: 650px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        /* ===== BRAIN CANVAS ===== */
+        #brain-canvas {
+            display: block;
+            margin: 0 auto 2rem;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.06), transparent 70%);
+        }
+
+        /* ===== STATS TICKER ===== */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            font-size: 0.72rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.2rem;
+        }
+
+        /* ===== CONTAINER WRAPPER ===== */
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== PHASE 1: INPUT STAGE ===== */
+        #input-stage {
+            display: grid;
+            grid-template-columns: 480px 1fr;
+            gap: 1.8rem;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (max-width: 1080px) {
+            #input-stage { grid-template-columns: 1fr; }
+        }
+
+        /* ===== PHASE 2: RESULTS STAGE ===== */
+        #results-stage {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #results-stage.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== FORM PANEL ===== */
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #475569;
+            margin-bottom: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, rgba(99,179,237,0.2), transparent);
+        }
+
+        .field-group { margin-bottom: 1.1rem; }
+        .field-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+        .field-label span:first-child {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+        .field-label .field-hint {
+            font-size: 0.68rem;
+            color: #60a5fa;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .neuro-input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+            border-radius: 10px;
+            padding: 0.65rem 0.9rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .neuro-input:focus {
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .neuro-input:hover { border-color: rgba(99, 179, 237, 0.3); }
+
+        select.neuro-input option { background: #0d1526; color: #e2e8f0; }
+
+        /* Slider */
+        .neuro-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 5px;
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 100px;
+            outline: none;
+            cursor: pointer;
+        }
+        .neuro-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+            transition: transform 0.2s;
+        }
+        .neuro-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        /* Model Selector Chips */
+        .model-chips {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        .model-chip {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+            border-radius: 10px;
+            padding: 0.6rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .model-chip:hover { border-color: rgba(59, 130, 246, 0.4); }
+        .model-chip.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+        }
+        .model-chip .chip-name { font-size: 0.75rem; font-weight: 600; color: #e2e8f0; }
+        .model-chip .chip-acc { font-size: 0.65rem; color: #64748b; margin-top: 0.1rem; font-family: 'JetBrains Mono', monospace; }
+        .model-chip.active .chip-acc { color: #60a5fa; }
+
+        /* Submit Button */
+        .analyze-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #2563eb, #0891b2);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.02em;
+            margin-top: 1.2rem;
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
+        }
+        .analyze-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .analyze-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(37, 99, 235, 0.45); }
+        .analyze-btn:hover::before { opacity: 1; }
+        .analyze-btn:active { transform: translateY(0); }
+        .analyze-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .btn-inner { display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+        .btn-spinner {
+            width: 20px; height: 20px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Reset Button */
+        .reset-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(99, 179, 237, 0.3);
+            color: #93c5fd;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.85rem 1.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .reset-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(99, 179, 237, 0.6);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.25);
+        }
+
+        /* ===== MODEL COMPARISON TABLE (FIXED WIDTHS & PADDING) ===== */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+        }
+        .model-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: auto;
+        }
+        .model-table th {
+            text-align: left;
+            padding: 0.75rem 0.85rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #64748b;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+            white-space: nowrap;
+        }
+        .model-table td {
+            padding: 0.85rem 0.85rem;
+            font-size: 0.82rem;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.25);
+            color: #94a3b8;
+            vertical-align: middle;
+        }
+        .model-table tr:last-child td { border-bottom: none; }
+        .model-table tr:hover td { background: rgba(59, 130, 246, 0.05); }
+        .model-table .model-name-cell {
+            font-weight: 600;
+            color: #e2e8f0;
+            white-space: nowrap;
+        }
+        .model-table .acc-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .acc-bar-mini {
+            width: 60px;
+            height: 4px;
+            background: rgba(51, 65, 85, 0.6);
+            border-radius: 100px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .acc-bar-mini-fill {
+            height: 100%;
+            border-radius: 100px;
+        }
+
+        /* ===== DIAGNOSIS CARD ===== */
+        .diagnosis-card {
+            padding: 2.2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(99, 179, 237, 0.15);
+            background: rgba(15, 25, 50, 0.75);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1.8rem;
+        }
+        .diagnosis-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.08), transparent 60%);
+            pointer-events: none;
+        }
+
+        .diagnosis-status-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .diagnosis-label { font-size: 0.72rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; margin-bottom: 0.5rem; }
+        
+        .diagnosis-result {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: #e2e8f0;
+            transition: all 0.5s ease;
+            line-height: 1.1;
+        }
+        .diagnosis-result.healthy { color: #10b981; text-shadow: 0 0 35px rgba(16,185,129,0.35); }
+        .diagnosis-result.mci { color: #f59e0b; text-shadow: 0 0 35px rgba(245,158,11,0.35); }
+        .diagnosis-result.alzheimer { color: #f43f5e; text-shadow: 0 0 35px rgba(244,63,94,0.35); }
+
+        .confidence-ring {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            flex-shrink: 0;
+        }
+        .confidence-ring svg { transform: rotate(-90deg); }
+        .ring-track { fill: none; stroke: rgba(99,179,237,0.1); stroke-width: 8; }
+        .ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .ring-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .ring-percent {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+        .ring-sub { font-size: 0.6rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        /* Probability Bars */
+        .prob-bars { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 1.8rem; }
+        .prob-bar-row { display: flex; flex-direction: column; gap: 0.35rem; }
+        .prob-bar-header { display: flex; justify-content: space-between; align-items: center; }
+        .prob-bar-label { font-size: 0.8rem; font-weight: 500; color: #cbd5e1; }
+        .prob-bar-value { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; }
+        .prob-bar-track {
+            height: 7px;
+            background: rgba(51, 65, 85, 0.6);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+        .prob-bar-fill {
+            height: 100%;
+            border-radius: 100px;
+            width: 0%;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Risk Tags */
+        .risk-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.4rem; }
+        .risk-tag {
+            padding: 0.3rem 0.8rem;
+            border-radius: 100px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid;
+        }
+
+        /* ===== SHAP PANEL ===== */
+        .shap-panel { padding: 2rem; margin-bottom: 1.8rem; }
+        .shap-container {
+            width: 100%;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px dashed rgba(51, 65, 85, 0.6);
+            border-radius: 14px;
+            margin-top: 1.2rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .shap-container img { width: 100%; border-radius: 10px; }
+
+        /* ===== RESULTS BOTTOM GRID ===== */
+        .results-bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) {
+            .results-bottom-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ===== METRICS ROW ===== */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 1400px;
+            margin: 0 auto 2.5rem;
+            padding: 0 1.5rem;
+        }
+        @media (max-width: 768px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .metric-card {
+            background: rgba(15, 25, 50, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(99, 179, 237, 0.1);
+            border-radius: 14px;
+            padding: 1.2rem 1.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px;
+            height: 100%;
+            border-radius: 3px 0 0 3px;
+        }
+        .metric-card.blue::after { background: linear-gradient(to bottom, #3b82f6, #06b6d4); }
+        .metric-card.green::after { background: linear-gradient(to bottom, #10b981, #059669); }
+        .metric-card.amber::after { background: linear-gradient(to bottom, #f59e0b, #d97706); }
+        .metric-card.violet::after { background: linear-gradient(to bottom, #8b5cf6, #7c3aed); }
+        .metric-icon { font-size: 1.3rem; margin-bottom: 0.6rem; }
+        .metric-val {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            line-height: 1;
+        }
+        .metric-desc { font-size: 0.72rem; color: #64748b; margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+        /* ===== LOADING OVERLAY ===== */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 8, 23, 0.88);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(12px);
+        }
+        .loading-overlay.active { display: flex; }
+        .loading-brain {
+            width: 80px; height: 80px;
+            position: relative;
+        }
+        .loading-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            animation: ringRotate 1.5s linear infinite;
+        }
+        .loading-ring:nth-child(1) { border-top-color: #3b82f6; animation-duration: 1s; }
+        .loading-ring:nth-child(2) { border-right-color: #06b6d4; animation-duration: 1.5s; inset: 10px; }
+        .loading-ring:nth-child(3) { border-bottom-color: #8b5cf6; animation-duration: 2s; inset: 20px; }
+        @keyframes ringRotate { to { transform: rotate(360deg); } }
+        .loading-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+        .loading-steps { display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
+        .loading-step {
+            font-size: 0.8rem;
+            color: #475569;
+            transition: color 0.4s;
+        }
+        .loading-step.active { color: #60a5fa; }
+        .loading-step.done { color: #34d399; }
+
+        /* Tooltip */
+        [data-tooltip] { position: relative; cursor: help; }
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(99,179,237,0.25);
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.72rem;
+            color: #94a3b8;
+            white-space: nowrap;
+            z-index: 50;
+            pointer-events: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        /* ===== DISCLAIMER BANNER ===== */
+        .disclaimer {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+        .disclaimer-inner {
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            padding: 1.1rem 1.4rem;
+            display: flex;
+            gap: 0.9rem;
+            align-items: flex-start;
+        }
+        .disclaimer-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+        .disclaimer-text { font-size: 0.75rem; color: #92400e; line-height: 1.6; }
+        .disclaimer-text strong { color: #fbbf24; }
+
+        footer {
+            text-align: center;
+            padding: 2.2rem 2rem;
+            border-top: 1px solid rgba(51, 65, 85, 0.3);
+            font-size: 0.75rem;
+            color: #475569;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-6">
+<body>
 
-    <header class="w-full max-w-6xl mb-8">
-        <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">NeuroAI Clinical Diagnostics</h1>
-        <p class="text-slate-400 mt-2">Tabular LLM & Ensemble Predictor for Cognitive Biomarkers</p>
-    </header>
+<!-- Ambient Background -->
+<canvas id="starfield"></canvas>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
 
-    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-brain">
+        <div class="loading-ring"></div>
+        <div class="loading-ring"></div>
+        <div class="loading-ring"></div>
+    </div>
+    <div class="loading-text">Running Diagnostic Intelligence</div>
+    <div class="loading-steps">
+        <div class="loading-step" id="step1">⚡ Preprocessing patient biomarkers...</div>
+        <div class="loading-step" id="step2">🧠 Performing multi-model inference...</div>
+        <div class="loading-step" id="step3">🔬 Computing SHAP explainability attribution...</div>
+        <div class="loading-step" id="step4">📊 Compiling diagnostic assessment...</div>
+    </div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="14" r="13" stroke="url(#ng1)" stroke-width="1.5"/>
+            <path d="M8 14c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6" stroke="url(#ng2)" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="2.5" fill="url(#ng1)"/>
+            <path d="M14 8v2M14 18v2M8 14H6M22 14h-2" stroke="url(#ng2)" stroke-width="1.2" stroke-linecap="round"/>
+            <defs>
+                <linearGradient id="ng1" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#60a5fa"/><stop offset="1" stop-color="#06b6d4"/>
+                </linearGradient>
+                <linearGradient id="ng2" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#60a5fa"/><stop offset="1" stop-color="#8b5cf6"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        NeuroAI Platform
+    </div>
+    <div style="display:flex; align-items:center; gap:1.2rem;">
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            Models Online
+        </div>
+        <div style="font-size:0.75rem; color:#64748b;" class="hidden sm:block">OASIS Cohort · Multi-Model Ensemble</div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero-section" id="heroSection">
+    <div class="hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="4"/></svg>
+        Explainable Clinical AI · Research Grade
+    </div>
+    <h1 class="hero-title">Alzheimer's Detection<br>Powered by Neural Intelligence</h1>
+    <p class="hero-subtitle">
+        Real-time cognitive impairment classification from multimodal patient biomarkers with cryptographic SHAP explainability.
+    </p>
+
+    <!-- Animated Brain Canvas -->
+    <canvas id="brain-canvas" width="200" height="200"></canvas>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-value" data-count-to="85.23">0</div>
+            <div class="stat-label">Top Accuracy %</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" data-count-to="4">0</div>
+            <div class="stat-label">AI Architectures</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" data-count-to="150">0</div>
+            <div class="stat-label">OASIS Patients</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" data-count-to="8">0</div>
+            <div class="stat-label">Biomarkers</div>
+        </div>
+    </div>
+</section>
+
+<!-- Metric Cards Banner -->
+<div class="metrics-grid" id="metricsBanner">
+    <div class="metric-card blue">
+        <div class="metric-icon">🧠</div>
+        <div class="metric-val">85.23%</div>
+        <div class="metric-desc">Random Forest Accuracy</div>
+    </div>
+    <div class="metric-card green">
+        <div class="metric-icon">🔬</div>
+        <div class="metric-val">SHAP</div>
+        <div class="metric-desc">Cryptographic XAI Attribution</div>
+    </div>
+    <div class="metric-card amber">
+        <div class="metric-icon">⚡</div>
+        <div class="metric-val">&lt;400ms</div>
+        <div class="metric-desc">Inference Latency</div>
+    </div>
+    <div class="metric-card violet">
+        <div class="metric-icon">🤖</div>
+        <div class="metric-val">BERT</div>
+        <div class="metric-desc">Tabular Transformer Fine-tuned</div>
+    </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- MAIN PAGE CONTAINER                                       -->
+<!-- ======================================================== -->
+<div class="page-container">
+
+    <!-- ======================================================== -->
+    <!-- STAGE 1: PATIENT BIOMARKER INPUTS & BENCHMARKS (VISIBLE FIRST) -->
+    <!-- ======================================================== -->
+    <div id="input-stage">
         
-        <!-- Input Form -->
-        <div class="glass-panel p-6 rounded-xl col-span-1 shadow-lg">
-            <h2 class="text-xl font-semibold mb-4 text-blue-300">Patient Biomarkers</h2>
-            <form id="prediction-form" class="space-y-4">
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm text-slate-300 mb-1">Age</label>
-                        <input type="number" id="age" value="72" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+        <!-- Form Column -->
+        <div class="glass" style="padding:2rem;">
+            <div style="display:flex;align-items:center;gap:0.9rem;margin-bottom:1.6rem;">
+                <div style="width:40px;height:40px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📋</div>
+                <div>
+                    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:#e2e8f0;">Patient Biomarkers</div>
+                    <div style="font-size:0.75rem;color:#64748b;">Adjust inputs and select model below</div>
+                </div>
+            </div>
+
+            <form id="prediction-form">
+
+                <!-- MODEL SELECTION -->
+                <div class="section-title">Select Model Architecture</div>
+                <div class="model-chips" style="margin-bottom:1.4rem;">
+                    <div class="model-chip active" data-model="Random_Forest">
+                        <div class="chip-name">🌲 Random Forest</div>
+                        <div class="chip-acc">85.23% acc</div>
                     </div>
-                    <div>
-                        <label class="block text-sm text-slate-300 mb-1">Gender</label>
-                        <select id="gender" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500">
-                            <option value="1">Male</option>
-                            <option value="0">Female</option>
+                    <div class="model-chip" data-model="XGBoost">
+                        <div class="chip-name">⚡ XGBoost</div>
+                        <div class="chip-acc">85.23% acc</div>
+                    </div>
+                    <div class="model-chip" data-model="Logistic_Regression">
+                        <div class="chip-name">📈 Logistic Reg.</div>
+                        <div class="chip-acc">82.95% acc</div>
+                    </div>
+                    <div class="model-chip" data-model="SVM_RBF">
+                        <div class="chip-name">🔮 SVM (RBF)</div>
+                        <div class="chip-acc">79.55% acc</div>
+                    </div>
+                </div>
+                <input type="hidden" id="selected-model" value="Random_Forest">
+
+                <!-- DEMOGRAPHICS -->
+                <div class="section-title">Demographics</div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.1rem;">
+                    <div class="field-group" style="margin-bottom:0;">
+                        <div class="field-label">
+                            <span data-tooltip="Patient's age in years">Age</span>
+                            <span class="field-hint" id="age-display">72 yrs</span>
+                        </div>
+                        <input type="range" class="neuro-slider" id="age" min="60" max="100" value="72" oninput="updateSlider(this,'age-display',' yrs')">
+                    </div>
+                    <div class="field-group" style="margin-bottom:0;">
+                        <div class="field-label"><span>Gender</span></div>
+                        <select id="gender" class="neuro-input">
+                            <option value="1">♂ Male</option>
+                            <option value="0">♀ Female</option>
                         </select>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm text-slate-300 mb-1">Education Level (1-5)</label>
-                    <input type="number" step="1" id="educ" value="3" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white">
-                </div>
+                <!-- SOCIAL DETERMINANTS -->
+                <div class="section-title">Social Determinants</div>
 
-                <div>
-                    <label class="block text-sm text-slate-300 mb-1">Socioeconomic Status (1-5)</label>
-                    <input type="number" step="1" id="ses" value="2" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white">
-                </div>
-
-                <div>
-                    <label class="block text-sm text-slate-300 mb-1">MMSE Score (0-30)</label>
-                    <input type="number" step="1" id="mmse" value="26" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm text-slate-300 mb-1">eTIV</label>
-                        <input type="number" id="etiv" value="1480" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white">
+                <div class="field-group">
+                    <div class="field-label">
+                        <span data-tooltip="Education tier: 1=Less than HS, 2=HS Grad, 3=Some College, 4=College Grad, 5=Postgrad">Education Level</span>
+                        <span class="field-hint" id="educ-display">Tier 3 / 5</span>
                     </div>
-                    <div>
-                        <label class="block text-sm text-slate-300 mb-1">nWBV</label>
-                        <input type="number" step="0.01" id="nwbv" value="0.74" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white">
+                    <input type="range" class="neuro-slider" id="educ" min="1" max="5" step="1" value="3" oninput="updateSlider(this,'educ-display',' / 5', 'Tier ')">
+                </div>
+
+                <div class="field-group">
+                    <div class="field-label">
+                        <span data-tooltip="Hollingshead Index: 1=Highest SES / Senior Execs, 5=Lowest SES / Unskilled labor">Socioeconomic Status (SES)</span>
+                        <span class="field-hint" id="ses-display">Tier 2 / 5</span>
+                    </div>
+                    <input type="range" class="neuro-slider" id="ses" min="1" max="5" step="1" value="2" oninput="updateSlider(this,'ses-display',' / 5', 'Tier ')">
+                </div>
+
+                <!-- COGNITIVE SCORE -->
+                <div class="section-title">Cognitive Assessment</div>
+
+                <div class="field-group">
+                    <div class="field-label">
+                        <span data-tooltip="Mini-Mental State Exam: 0-17 severe, 18-23 mild, 24-30 normal">MMSE Score</span>
+                        <span class="field-hint" id="mmse-display">26 / 30</span>
+                    </div>
+                    <input type="range" class="neuro-slider" id="mmse" min="0" max="30" step="1" value="26" oninput="updateMmse(this)">
+                    <div style="display:flex;justify-content:space-between;margin-top:0.35rem;">
+                        <span style="font-size:0.65rem;color:#f43f5e;font-weight:500;">Severe (&lt;18)</span>
+                        <span style="font-size:0.65rem;color:#f59e0b;font-weight:500;">MCI (18-23)</span>
+                        <span style="font-size:0.65rem;color:#10b981;font-weight:500;">Normal (24-30)</span>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm text-slate-300 mb-1">Atlas Scaling Factor (ASF)</label>
-                    <input type="number" step="0.01" id="asf" value="1.19" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white">
+                <!-- VOLUMETRIC MRI -->
+                <div class="section-title">Volumetric MRI Features</div>
+
+                <div class="field-group">
+                    <div class="field-label">
+                        <span data-tooltip="Estimated Total Intracranial Volume (mm³)">eTIV (mm³)</span>
+                        <span class="field-hint" id="etiv-display">1480 mm³</span>
+                    </div>
+                    <input type="number" id="etiv" value="1480" class="neuro-input" placeholder="e.g. 1480">
                 </div>
 
-                <button type="submit" class="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-semibold py-2 px-4 rounded transition duration-200 shadow-lg shadow-blue-500/30">
-                    Analyze Patient Data
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+                    <div class="field-group" style="margin-bottom:0;">
+                        <div class="field-label">
+                            <span data-tooltip="Normalized Whole Brain Volume (brain atrophy marker)">nWBV</span>
+                            <span class="field-hint" id="nwbv-display">0.74</span>
+                        </div>
+                        <input type="range" class="neuro-slider" id="nwbv" min="0.6" max="0.9" step="0.01" value="0.74" oninput="updateSlider(this,'nwbv-display','')">
+                    </div>
+                    <div class="field-group" style="margin-bottom:0;">
+                        <div class="field-label">
+                            <span data-tooltip="Atlas Scaling Factor (normalization for head size variation)">ASF</span>
+                            <span class="field-hint" id="asf-display">1.19</span>
+                        </div>
+                        <input type="range" class="neuro-slider" id="asf" min="0.8" max="1.8" step="0.01" value="1.19" oninput="updateSlider(this,'asf-display','')">
+                    </div>
+                </div>
+
+                <button type="submit" class="analyze-btn" id="analyzeBtn">
+                    <div class="btn-inner">
+                        <div class="btn-spinner" id="btnSpinner"></div>
+                        <span id="btnText">⚡ Run Diagnostic Analysis</span>
+                    </div>
                 </button>
+
             </form>
         </div>
 
-        <!-- Results Display -->
-        <div class="col-span-1 lg:col-span-2 space-y-6">
+        <!-- Right Side of Input Stage: Radar preview & Model Benchmarks Table -->
+        <div style="display:flex; flex-direction:column; gap:1.8rem;">
             
-            <div class="glass-panel p-6 rounded-xl shadow-lg flex items-center justify-between">
-                <div>
-                    <h2 class="text-lg text-slate-400">Diagnostic Assessment</h2>
-                    <p id="diagnosis-result" class="text-3xl font-bold mt-1 text-slate-500">Awaiting Input...</p>
+            <!-- Live Radar Preview -->
+            <div class="glass-card" style="padding:1.8rem;">
+                <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;">
+                    <div style="width:38px;height:38px;background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📡</div>
+                    <div>
+                        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem;color:#e2e8f0;">Live Patient Profile Radar</div>
+                        <div style="font-size:0.75rem;color:#64748b;">Updates dynamically as you adjust the biomarker sliders</div>
+                    </div>
                 </div>
-                <div id="prob-container" class="hidden flex gap-4">
-                    <!-- Probabilities will be injected here -->
+                <div style="position:relative;height:270px;">
+                    <canvas id="radarChart"></canvas>
                 </div>
             </div>
 
-            <div class="glass-panel p-6 rounded-xl shadow-lg">
-                <h2 class="text-xl font-semibold mb-2 text-blue-300">SHAP Feature Explainability</h2>
-                <p class="text-sm text-slate-400 mb-4">Cryptographic attribution showing how each biomarker influenced the diagnosis.</p>
-                
-                <div id="shap-container" class="w-full h-80 flex items-center justify-center border border-dashed border-slate-600 rounded bg-slate-800/50">
-                    <span class="text-slate-500">Run prediction to view explainability plot.</span>
+            <!-- Model Comparison Table (Clean, Proper Padding, Never Overflowing) -->
+            <div class="glass-card" style="padding:1.8rem;">
+                <div class="section-title">Model Performance Benchmarks</div>
+                <div class="table-responsive">
+                    <table class="model-table">
+                        <thead>
+                            <tr>
+                                <th style="width:36%;">Architecture</th>
+                                <th style="width:24%;">Type</th>
+                                <th style="width:22%;">Accuracy</th>
+                                <th style="width:18%;">F1-Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="row-rf">
+                                <td class="model-name-cell">🌲 Random Forest</td>
+                                <td style="color:#64748b;">Ensemble</td>
+                                <td class="acc-cell" style="color:#10b981;">
+                                    85.23%
+                                    <div class="acc-bar-mini"><div class="acc-bar-mini-fill" style="width:85.23%;background:linear-gradient(90deg,#10b981,#059669);"></div></div>
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace;color:#34d399;">0.8523</td>
+                            </tr>
+                            <tr id="row-xgb">
+                                <td class="model-name-cell">⚡ XGBoost</td>
+                                <td style="color:#64748b;">Boosting</td>
+                                <td class="acc-cell" style="color:#10b981;">
+                                    85.23%
+                                    <div class="acc-bar-mini"><div class="acc-bar-mini-fill" style="width:85.23%;background:linear-gradient(90deg,#3b82f6,#06b6d4);"></div></div>
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace;color:#60a5fa;">0.8368</td>
+                            </tr>
+                            <tr id="row-lr">
+                                <td class="model-name-cell">📈 Logistic Reg.</td>
+                                <td style="color:#64748b;">Linear</td>
+                                <td class="acc-cell" style="color:#f59e0b;">
+                                    82.95%
+                                    <div class="acc-bar-mini"><div class="acc-bar-mini-fill" style="width:82.95%;background:linear-gradient(90deg,#f59e0b,#d97706);"></div></div>
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace;color:#fbbf24;">0.8228</td>
+                            </tr>
+                            <tr id="row-bert">
+                                <td class="model-name-cell">🤖 BERT Transformer</td>
+                                <td style="color:#64748b;">Sequence</td>
+                                <td class="acc-cell" style="color:#f59e0b;">
+                                    81.82%
+                                    <div class="acc-bar-mini"><div class="acc-bar-mini-fill" style="width:81.82%;background:linear-gradient(90deg,#8b5cf6,#7c3aed);"></div></div>
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace;color:#a78bfa;">0.8235</td>
+                            </tr>
+                            <tr id="row-svm">
+                                <td class="model-name-cell">🔮 SVM (RBF)</td>
+                                <td style="color:#64748b;">Kernel</td>
+                                <td class="acc-cell" style="color:#f43f5e;">
+                                    79.55%
+                                    <div class="acc-bar-mini"><div class="acc-bar-mini-fill" style="width:79.55%;background:linear-gradient(90deg,#f43f5e,#e11d48);"></div></div>
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace;color:#fb7185;">0.7934</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
         </div>
-    </main>
+    </div><!-- /input-stage -->
 
-    <script>
-        document.getElementById("prediction-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
+    <!-- ======================================================== -->
+    <!-- STAGE 2: DIAGNOSIS & EXPLAINABILITY RESULTS (SHOWN AFTER PREDICT) -->
+    <!-- ======================================================== -->
+    <div id="results-stage">
+
+        <!-- Top Navigation / Action Bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; flex-wrap:wrap; gap:1rem;">
+            <div style="display:flex; align-items:center; gap:0.8rem;">
+                <div style="width:42px;height:42px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">✨</div>
+                <div>
+                    <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#ffffff;">Clinical Diagnostic Report</h2>
+                    <p style="font-size:0.8rem;color:#64748b;" id="report-meta-timestamp">Generated successfully</p>
+                </div>
+            </div>
             
-            const btn = e.target.querySelector("button");
-            btn.innerText = "Analyzing...";
-            btn.classList.add("animate-pulse");
+            <!-- BUTTON: Run Another Analysis -->
+            <button type="button" class="reset-btn" id="runAnotherBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                    <path d="M3 3v5h5"/>
+                </svg>
+                Run Another Analysis
+            </button>
+        </div>
 
-            const payload = {
-                Age: parseFloat(document.getElementById("age").value),
-                Gender_Male: parseInt(document.getElementById("gender").value),
-                Educ: parseFloat(document.getElementById("educ").value),
-                SES: parseFloat(document.getElementById("ses").value),
-                MMSE: parseFloat(document.getElementById("mmse").value),
-                eTIV: parseFloat(document.getElementById("etiv").value),
-                nWBV: parseFloat(document.getElementById("nwbv").value),
-                ASF: parseFloat(document.getElementById("asf").value)
+        <!-- DIAGNOSIS CARD -->
+        <div class="diagnosis-card" id="diagnosisCard">
+            <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:1.5rem;">
+                <div style="width:36px;height:36px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;">🔬</div>
+                <div>
+                    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;color:#e2e8f0;">Primary Assessment</div>
+                    <div style="font-size:0.72rem;color:#64748b;" id="model-used-label">Inference completed</div>
+                </div>
+            </div>
+
+            <div class="diagnosis-status-row">
+                <div>
+                    <div class="diagnosis-label">Model Classification</div>
+                    <div class="diagnosis-result" id="diagnosis-result">Calculating...</div>
+                    <div style="font-size:0.82rem;color:#94a3b8;margin-top:0.7rem;" id="diagnosis-detail">Probabilistic clinical prediction based on OASIS trained decision boundary.</div>
+                </div>
+                
+                <!-- Circular confidence ring -->
+                <div class="confidence-ring" id="confidence-ring-container">
+                    <svg viewBox="0 0 100 100" width="110" height="110">
+                        <circle class="ring-track" cx="50" cy="50" r="40"/>
+                        <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="40"
+                            stroke="#3b82f6"
+                            stroke-dasharray="251.2"
+                            stroke-dashoffset="251.2"/>
+                    </svg>
+                    <div class="ring-label">
+                        <div class="ring-percent" id="ring-percent">0%</div>
+                        <div class="ring-sub">Confidence</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auto-Calculated Risk Tags -->
+            <div class="risk-tags" id="risk-tags">
+                <span class="risk-tag" id="tag-age"></span>
+                <span class="risk-tag" id="tag-mmse"></span>
+                <span class="risk-tag" id="tag-nwbv"></span>
+            </div>
+
+            <!-- Probability Distribution Bars -->
+            <div class="prob-bars" id="prob-bars">
+                <div style="font-size:0.75rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;margin-top:0.6rem;">Class Probability Distribution</div>
+                
+                <div class="prob-bar-row">
+                    <div class="prob-bar-header">
+                        <span class="prob-bar-label">🟢 Cognitively Normal (Nondemented)</span>
+                        <span class="prob-bar-value" id="prob-healthy" style="color:#10b981;">—</span>
+                    </div>
+                    <div class="prob-bar-track">
+                        <div class="prob-bar-fill" id="fill-healthy" style="background:linear-gradient(90deg,#10b981,#059669);"></div>
+                    </div>
+                </div>
+
+                <div class="prob-bar-row">
+                    <div class="prob-bar-header">
+                        <span class="prob-bar-label">🟡 Mild Cognitive Impairment (Converted / MCI)</span>
+                        <span class="prob-bar-value" id="prob-mci" style="color:#f59e0b;">—</span>
+                    </div>
+                    <div class="prob-bar-track">
+                        <div class="prob-bar-fill" id="fill-mci" style="background:linear-gradient(90deg,#f59e0b,#d97706);"></div>
+                    </div>
+                </div>
+
+                <div class="prob-bar-row">
+                    <div class="prob-bar-header">
+                        <span class="prob-bar-label">🔴 Alzheimer's Disease (Demented)</span>
+                        <span class="prob-bar-value" id="prob-ad" style="color:#f43f5e;">—</span>
+                    </div>
+                    <div class="prob-bar-track">
+                        <div class="prob-bar-fill" id="fill-ad" style="background:linear-gradient(90deg,#f43f5e,#e11d48);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SHAP EXPLAINABILITY PANEL -->
+        <div class="glass-card shap-panel">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;flex-wrap:wrap;gap:0.8rem;">
+                <div style="display:flex;align-items:center;gap:0.8rem;">
+                    <div style="width:40px;height:40px;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🧩</div>
+                    <div>
+                        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:#e2e8f0;">SHAP Feature Attribution (Explainable AI)</div>
+                        <div style="font-size:0.75rem;color:#64748b;">Mathematical proof of biomarker contribution to diagnosis</div>
+                    </div>
+                </div>
+                <div style="font-size:0.72rem;color:#a78bfa;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);border-radius:100px;padding:0.35rem 0.9rem;">
+                    Shapley Additive exPlanations
+                </div>
+            </div>
+            <p style="font-size:0.82rem;color:#94a3b8;line-height:1.65;margin-bottom:0.5rem;">
+                This cryptographic attribution chart eliminates the "black box" in medicine. Blue bars indicate biomarkers that actively pushed the AI toward this diagnosis, while red bars opposed it.
+            </p>
+
+            <div class="shap-container" id="shap-container">
+                <!-- SHAP image will be injected here -->
+            </div>
+        </div>
+
+        <!-- TWO-COLUMN BOTTOM METRICS: Patient Snapshot & Clinical Reference -->
+        <div class="results-bottom-grid">
+            
+            <!-- Patient Biomarker Summary Card -->
+            <div class="glass-card" style="padding:1.8rem;">
+                <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.2rem;">
+                    <div style="width:36px;height:36px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;">👤</div>
+                    <div>
+                        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;color:#e2e8f0;">Submitted Patient Profile</div>
+                        <div style="font-size:0.72rem;color:#64748b;">Snapshot of clinical values used in this assessment</div>
+                    </div>
+                </div>
+                <div id="patient-snapshot-content" style="display:grid; grid-template-columns:1fr 1fr; gap:0.9rem;">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+
+            <!-- Clinical Intelligence Guide -->
+            <div class="glass-card" style="padding:1.8rem;">
+                <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.2rem;">
+                    <div style="width:36px;height:36px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;">📖</div>
+                    <div>
+                        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;color:#e2e8f0;">Clinical Decision Support</div>
+                        <div style="font-size:0.72rem;color:#64748b;">Neurological context & recommendations</div>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0.8rem;font-size:0.82rem;color:#94a3b8;line-height:1.6;">
+                    <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:10px;padding:0.9rem 1rem;">
+                        <strong style="color:#60a5fa;">💡 Key Biomarker Highlights:</strong>
+                        <div style="margin-top:0.4rem;">
+                            The combination of reduced <span style="color:#e2e8f0;">nWBV</span> (brain volume) and sub-24 <span style="color:#e2e8f0;">MMSE</span> score strongly correlates with medial temporal lobe atrophy, a hallmark of early Alzheimer's progression.
+                        </div>
+                    </div>
+                    <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:0.9rem 1rem;">
+                        <strong style="color:#34d399;">🩺 Recommended Next Steps:</strong>
+                        <div style="margin-top:0.4rem;">
+                            Consider volumetric MRI follow-up in 6 months, PET amyloid imaging, and formal neuropsychological battery (MoCA, CDR scoring).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Action Bar: Run Another Analysis -->
+        <div style="text-align:center; margin: 2.5rem 0 1rem;">
+            <button type="button" class="reset-btn" id="runAnotherBtnBottom" style="padding:1rem 2.5rem; font-size:1.05rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                    <path d="M3 3v5h5"/>
+                </svg>
+                Run Another Diagnostic Analysis
+            </button>
+        </div>
+
+    </div><!-- /results-stage -->
+
+</div><!-- /page-container -->
+
+<!-- Disclaimer -->
+<div class="disclaimer">
+    <div class="disclaimer-inner">
+        <div class="disclaimer-icon">⚠️</div>
+        <div class="disclaimer-text">
+            <strong>Research & Demonstration Use Only.</strong> This AI diagnostic platform is built for benchmarking machine learning architectures on the OASIS neuroimaging cohort. It is <strong>NOT FDA-approved</strong> and must not be used as a substitute for professional clinical neurology evaluation.
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;">
+        <span>NeuroAI Diagnostic Intelligence</span>
+        <span style="color:#334155;">·</span>
+        <span>OASIS Cross-Sectional MRI Cohort</span>
+        <span style="color:#334155;">·</span>
+        <span>FastAPI + Sklearn + XGBoost + SHAP</span>
+        <span style="color:#334155;">·</span>
+        <span>Explainable Healthcare AI</span>
+    </div>
+</footer>
+
+<script>
+    // ===== STARFIELD BACKGROUND =====
+    const starCanvas = document.getElementById('starfield');
+    const starCtx = starCanvas.getContext('2d');
+    let stars = [];
+    function resizeStarfield() {
+        starCanvas.width = window.innerWidth;
+        starCanvas.height = window.innerHeight;
+    }
+    function initStars() {
+        stars = [];
+        for (let i = 0; i < 120; i++) {
+            stars.push({
+                x: Math.random() * starCanvas.width,
+                y: Math.random() * starCanvas.height,
+                r: Math.random() * 1.2 + 0.3,
+                alpha: Math.random() * 0.5 + 0.1,
+                speed: Math.random() * 0.3 + 0.05,
+                twinkle: Math.random() * Math.PI * 2
+            });
+        }
+    }
+    function drawStars() {
+        starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+        stars.forEach(s => {
+            s.twinkle += 0.01;
+            const alpha = s.alpha * (0.6 + 0.4 * Math.sin(s.twinkle));
+            starCtx.beginPath();
+            starCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            starCtx.fillStyle = `rgba(148,163,184,${alpha})`;
+            starCtx.fill();
+        });
+        requestAnimationFrame(drawStars);
+    }
+    resizeStarfield(); initStars(); drawStars();
+    window.addEventListener('resize', () => { resizeStarfield(); initStars(); });
+
+    // ===== BRAIN CANVAS ANIMATION =====
+    const brainCanvas = document.getElementById('brain-canvas');
+    const bCtx = brainCanvas.getContext('2d');
+    let brainAngle = 0;
+    let brainNodes = [];
+    function initBrain() {
+        brainNodes = [];
+        const cx = 100, cy = 100, r = 70;
+        for (let i = 0; i < 28; i++) {
+            const angle = (i / 28) * Math.PI * 2;
+            const jitter = (Math.random() - 0.5) * 30;
+            brainNodes.push({
+                x: cx + (r + jitter) * Math.cos(angle),
+                y: cy + (r * 0.7 + jitter) * Math.sin(angle),
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3,
+                pulse: Math.random() * Math.PI * 2,
+                active: false,
+                activeCooldown: 0
+            });
+        }
+        for (let i = 0; i < 12; i++) {
+            const angle = (i / 12) * Math.PI * 2;
+            brainNodes.push({
+                x: cx + 35 * Math.cos(angle),
+                y: cy + 25 * Math.sin(angle),
+                vx: (Math.random() - 0.5) * 0.2,
+                vy: (Math.random() - 0.5) * 0.2,
+                pulse: Math.random() * Math.PI * 2,
+                active: false,
+                activeCooldown: 0
+            });
+        }
+    }
+    function drawBrain() {
+        bCtx.clearRect(0, 0, 200, 200);
+        brainAngle += 0.008;
+        if (Math.random() < 0.05) {
+            const idx = Math.floor(Math.random() * brainNodes.length);
+            brainNodes[idx].active = true;
+            brainNodes[idx].activeCooldown = 40;
+        }
+        brainNodes.forEach((n, i) => {
+            n.pulse += 0.04;
+            n.x += n.vx + Math.sin(brainAngle + i) * 0.2;
+            n.y += n.vy + Math.cos(brainAngle * 0.7 + i) * 0.15;
+            n.x = Math.max(20, Math.min(180, n.x));
+            n.y = Math.max(20, Math.min(180, n.y));
+            if (n.activeCooldown > 0) n.activeCooldown--;
+            else n.active = false;
+        });
+        for (let i = 0; i < brainNodes.length; i++) {
+            for (let j = i + 1; j < brainNodes.length; j++) {
+                const a = brainNodes[i], b = brainNodes[j];
+                const d = Math.hypot(a.x - b.x, a.y - b.y);
+                if (d < 55) {
+                    const alpha = (1 - d / 55) * 0.25;
+                    const isActive = a.active || b.active;
+                    bCtx.strokeStyle = isActive
+                        ? `rgba(99,179,237,${alpha * 3})`
+                        : `rgba(59,130,246,${alpha})`;
+                    bCtx.lineWidth = isActive ? 1.5 : 0.5;
+                    bCtx.beginPath();
+                    bCtx.moveTo(a.x, a.y);
+                    bCtx.lineTo(b.x, b.y);
+                    bCtx.stroke();
+                }
+            }
+        }
+        brainNodes.forEach(n => {
+            const r = n.active ? 4 : 2.5 + Math.sin(n.pulse) * 0.5;
+            const alpha = n.active ? 1 : 0.5 + 0.3 * Math.sin(n.pulse);
+            if (n.active) {
+                bCtx.beginPath();
+                bCtx.arc(n.x, n.y, r + 5, 0, Math.PI * 2);
+                bCtx.fillStyle = `rgba(99,179,237,0.15)`;
+                bCtx.fill();
+            }
+            bCtx.beginPath();
+            bCtx.arc(n.x, n.y, r, 0, Math.PI * 2);
+            const grad = bCtx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r);
+            grad.addColorStop(0, n.active ? `rgba(99,179,237,${alpha})` : `rgba(59,130,246,${alpha})`);
+            grad.addColorStop(1, 'rgba(59,130,246,0)');
+            bCtx.fillStyle = grad;
+            bCtx.fill();
+        });
+        requestAnimationFrame(drawBrain);
+    }
+    initBrain(); drawBrain();
+
+    // ===== RADAR CHART =====
+    const radarCtx = document.getElementById('radarChart').getContext('2d');
+    const radarChart = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Age', 'Education', 'SES', 'MMSE', 'nWBV', 'ASF'],
+            datasets: [{
+                label: 'Patient Profile',
+                data: [60, 60, 40, 87, 73, 65],
+                borderColor: 'rgba(59,130,246,0.85)',
+                backgroundColor: 'rgba(59,130,246,0.15)',
+                borderWidth: 2,
+                pointBackgroundColor: '#3b82f6',
+                pointBorderColor: '#60a5fa',
+                pointRadius: 5,
+            }, {
+                label: 'Population Norm',
+                data: [50, 50, 50, 75, 70, 60],
+                borderColor: 'rgba(99,179,237,0.25)',
+                backgroundColor: 'rgba(99,179,237,0.03)',
+                borderWidth: 1.5,
+                borderDash: [4,4],
+                pointRadius: 3,
+                pointBackgroundColor: 'rgba(99,179,237,0.4)',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    min: 0, max: 100,
+                    grid: { color: 'rgba(51,65,85,0.4)' },
+                    angleLines: { color: 'rgba(51,65,85,0.4)' },
+                    ticks: { display: false },
+                    pointLabels: {
+                        color: '#94a3b8',
+                        font: { size: 11, family: 'Inter', weight: '500' }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12 }
+                }
+            }
+        }
+    });
+
+    // ===== SLIDER UPDATES =====
+    function updateSlider(el, displayId, suffix, prefix = '') {
+        const val = parseFloat(el.value).toFixed(el.step < 1 ? 2 : 0);
+        document.getElementById(displayId).textContent = prefix + val + suffix;
+        updateRadar();
+    }
+    function updateMmse(el) {
+        document.getElementById('mmse-display').textContent = el.value + ' / 30';
+        updateRadar();
+    }
+    function updateRadar() {
+        const age = parseInt(document.getElementById('age').value);
+        const educ = parseInt(document.getElementById('educ').value);
+        const ses = parseInt(document.getElementById('ses').value);
+        const mmse = parseInt(document.getElementById('mmse').value);
+        const nwbv = parseFloat(document.getElementById('nwbv').value);
+        const asf = parseFloat(document.getElementById('asf').value);
+        radarChart.data.datasets[0].data = [
+            ((age - 60) / 40) * 100,
+            (educ / 5) * 100,
+            (ses / 5) * 100,
+            (mmse / 30) * 100,
+            ((nwbv - 0.6) / 0.3) * 100,
+            ((asf - 0.8) / 1.0) * 100,
+        ];
+        radarChart.update('none');
+    }
+
+    // ===== MODEL SELECTION CHIPS =====
+    document.querySelectorAll('.model-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            document.querySelectorAll('.model-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            document.getElementById('selected-model').value = chip.dataset.model;
+        });
+    });
+
+    // ===== COUNTER ANIMATION =====
+    function animateCounters() {
+        document.querySelectorAll('[data-count-to]').forEach(el => {
+            const target = parseFloat(el.dataset.countTo);
+            const isDecimal = target % 1 !== 0;
+            let current = 0;
+            const duration = 1800;
+            const step = 16;
+            const increment = target / (duration / step);
+            const timer = setInterval(() => {
+                current = Math.min(current + increment, target);
+                el.textContent = isDecimal ? current.toFixed(2) : Math.floor(current);
+                if (current >= target) clearInterval(timer);
+            }, step);
+        });
+    }
+    setTimeout(animateCounters, 400);
+
+    // ===== LOADING OVERLAY STEPS =====
+    let loadingTimer = null;
+    function startLoadingSequence() {
+        const steps = ['step1','step2','step3','step4'];
+        let i = 0;
+        steps.forEach(s => { document.getElementById(s).className = 'loading-step'; });
+        loadingTimer = setInterval(() => {
+            if (i > 0) document.getElementById(steps[i-1]).className = 'loading-step done';
+            if (i < steps.length) { document.getElementById(steps[i]).className = 'loading-step active'; i++; }
+        }, 500);
+    }
+    function stopLoadingSequence() {
+        clearInterval(loadingTimer);
+        ['step1','step2','step3','step4'].forEach(s => { document.getElementById(s).className = 'loading-step done'; });
+    }
+
+    // ===== CONFIDENCE RING =====
+    function setConfidenceRing(pct, color) {
+        const circumference = 251.2;
+        const offset = circumference - (pct / 100) * circumference;
+        const fill = document.getElementById('ring-fill');
+        fill.style.strokeDashoffset = offset;
+        fill.setAttribute('stroke', color);
+        document.getElementById('ring-percent').textContent = pct.toFixed(1) + '%';
+    }
+
+    // ===== SWITCH STAGES HELPER =====
+    function showResultsStage() {
+        document.getElementById('input-stage').style.display = 'none';
+        const results = document.getElementById('results-stage');
+        results.style.display = 'block';
+        setTimeout(() => {
+            results.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 50);
+    }
+
+    function showInputStage() {
+        const results = document.getElementById('results-stage');
+        results.classList.remove('active');
+        setTimeout(() => {
+            results.style.display = 'none';
+            document.getElementById('input-stage').style.display = 'grid';
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }, 200);
+    }
+
+    // Event listeners for "Run Another Analysis" buttons
+    document.getElementById('runAnotherBtn').addEventListener('click', showInputStage);
+    document.getElementById('runAnotherBtnBottom').addEventListener('click', showInputStage);
+
+    // ===== MAIN FORM SUBMIT (RUN PREDICTION) =====
+    document.getElementById('prediction-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const btn = document.getElementById('analyzeBtn');
+        const spinner = document.getElementById('btnSpinner');
+        const btnText = document.getElementById('btnText');
+
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        btnText.textContent = 'Processing...';
+
+        document.getElementById('loadingOverlay').classList.add('active');
+        startLoadingSequence();
+
+        const age = parseFloat(document.getElementById('age').value);
+        const gender = parseInt(document.getElementById('gender').value);
+        const educ = parseFloat(document.getElementById('educ').value);
+        const ses = parseFloat(document.getElementById('ses').value);
+        const mmse = parseFloat(document.getElementById('mmse').value);
+        const etiv = parseFloat(document.getElementById('etiv').value);
+        const nwbv = parseFloat(document.getElementById('nwbv').value);
+        const asf = parseFloat(document.getElementById('asf').value);
+        const model = document.getElementById('selected-model').value;
+
+        const payload = {
+            Age: age,
+            Gender_Male: gender,
+            Educ: educ,
+            SES: ses,
+            MMSE: mmse,
+            eTIV: etiv,
+            nWBV: nwbv,
+            ASF: asf,
+            model: model
+        };
+
+        try {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            stopLoadingSequence();
+            await new Promise(r => setTimeout(r, 450));
+            document.getElementById('loadingOverlay').classList.remove('active');
+
+            // 1. TRANSITION VIEW: Hide input stage, show results stage!
+            showResultsStage();
+
+            // 2. Update Header meta
+            document.getElementById('report-meta-timestamp').textContent = 
+                `Analyzed using ${model.replace('_', ' ')} · ${new Date().toLocaleTimeString()} · Latency: ${data.latency_ms || '<400'}ms`;
+
+            // 3. Update Diagnosis label & color
+            const diagEl = document.getElementById('diagnosis-result');
+            diagEl.className = 'diagnosis-result';
+            const diagMap = {
+                'Nondemented': { cls: 'healthy', label: 'Cognitively Normal', emoji: '🟢', color: '#10b981' },
+                'Healthy': { cls: 'healthy', label: 'Cognitively Normal', emoji: '🟢', color: '#10b981' },
+                'Converted': { cls: 'mci', label: 'Mild Cognitive Impairment (MCI)', emoji: '🟡', color: '#f59e0b' },
+                'MCI': { cls: 'mci', label: 'Mild Cognitive Impairment (MCI)', emoji: '🟡', color: '#f59e0b' },
+                'Demented': { cls: 'alzheimer', label: "Alzheimer's Disease", emoji: '🔴', color: '#f43f5e' },
+            };
+            const dInfo = diagMap[data.diagnosis] || { cls: '', label: data.diagnosis, emoji: '⚪', color: '#94a3b8' };
+            diagEl.classList.add(dInfo.cls);
+            diagEl.textContent = `${dInfo.emoji} ${dInfo.label}`;
+
+            document.getElementById('model-used-label').textContent = `Inference Model: ${model.replace('_', ' ')}`;
+
+            // 4. Update Confidence Ring
+            const maxProb = Math.max(...Object.values(data.probabilities));
+            setConfidenceRing(maxProb, dInfo.color);
+
+            // 5. Update Risk Tags
+            const tagAge = document.getElementById('tag-age');
+            tagAge.textContent = age > 80 ? '⚠️ Advanced Age (>80)' : age > 70 ? '🔶 Older Adult (70-80)' : '✅ Young Senior (<70)';
+            tagAge.style.color = age > 80 ? '#f43f5e' : age > 70 ? '#f59e0b' : '#10b981';
+            tagAge.style.borderColor = tagAge.style.color;
+            tagAge.style.background = age > 80 ? 'rgba(244,63,94,0.08)' : age > 70 ? 'rgba(245,158,11,0.08)' : 'rgba(16,185,129,0.08)';
+
+            const tagMmse = document.getElementById('tag-mmse');
+            tagMmse.textContent = mmse >= 24 ? '✅ Normal MMSE (24-30)' : mmse >= 18 ? '⚠️ Mild Impairment (18-23)' : '🔴 Severe Impairment (<18)';
+            tagMmse.style.color = mmse >= 24 ? '#10b981' : mmse >= 18 ? '#f59e0b' : '#f43f5e';
+            tagMmse.style.borderColor = tagMmse.style.color;
+            tagMmse.style.background = mmse >= 24 ? 'rgba(16,185,129,0.08)' : mmse >= 18 ? 'rgba(245,158,11,0.08)' : 'rgba(244,63,94,0.08)';
+
+            const tagNwbv = document.getElementById('tag-nwbv');
+            tagNwbv.textContent = nwbv >= 0.75 ? '✅ Normal Whole Brain Volume' : nwbv >= 0.70 ? '⚠️ Reduced Brain Volume' : '🔴 Significant Atrophy';
+            tagNwbv.style.color = nwbv >= 0.75 ? '#10b981' : nwbv >= 0.70 ? '#f59e0b' : '#f43f5e';
+            tagNwbv.style.borderColor = tagNwbv.style.color;
+            tagNwbv.style.background = nwbv >= 0.75 ? 'rgba(16,185,129,0.08)' : nwbv >= 0.70 ? 'rgba(245,158,11,0.08)' : 'rgba(244,63,94,0.08)';
+
+            // 6. Update Probability Bars
+            const probColorMap = {
+                'Nondemented': { val: 'prob-healthy', fill: 'fill-healthy' },
+                'Healthy': { val: 'prob-healthy', fill: 'fill-healthy' },
+                'Converted': { val: 'prob-mci', fill: 'fill-mci' },
+                'MCI': { val: 'prob-mci', fill: 'fill-mci' },
+                'Demented': { val: 'prob-ad', fill: 'fill-ad' },
+                'Alzheimer': { val: 'prob-ad', fill: 'fill-ad' }
             };
 
-            try {
-                const response = await fetch("/predict", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-                
-                const data = await response.json();
-                
-                // Update Diagnosis Text and Color
-                const diagEl = document.getElementById("diagnosis-result");
-                diagEl.innerText = data.diagnosis;
-                diagEl.className = "text-3xl font-bold mt-1";
-                if (data.diagnosis === "Healthy") diagEl.classList.add("text-emerald-400");
-                else if (data.diagnosis === "MCI") diagEl.classList.add("text-amber-400");
-                else diagEl.classList.add("text-rose-500");
+            ['prob-healthy','prob-mci','prob-ad'].forEach(id => document.getElementById(id).textContent = '0%');
+            ['fill-healthy','fill-mci','fill-ad'].forEach(id => document.getElementById(id).style.width = '0%');
 
-                // Update Probabilities
-                const probContainer = document.getElementById("prob-container");
-                probContainer.innerHTML = "";
-                probContainer.classList.remove("hidden");
-                for (const [cls, prob] of Object.entries(data.probabilities)) {
-                    probContainer.innerHTML += `
-                        <div class="text-center bg-slate-800 px-4 py-2 rounded border border-slate-700">
-                            <div class="text-xs text-slate-400">${cls}</div>
-                            <div class="font-mono font-semibold">${prob}%</div>
-                        </div>
-                    `;
+            for (const [cls, prob] of Object.entries(data.probabilities)) {
+                const mapping = probColorMap[cls];
+                if (mapping) {
+                    document.getElementById(mapping.val).textContent = prob.toFixed(1) + '%';
+                    setTimeout(() => { document.getElementById(mapping.fill).style.width = prob + '%'; }, 100);
                 }
-
-                // Render SHAP Plot
-                const shapContainer = document.getElementById("shap-container");
-                shapContainer.innerHTML = `<img src="data:image/png;base64,${data.shap_image}" class="max-w-full max-h-full rounded shadow-md" alt="SHAP Plot" />`;
-
-            } catch (error) {
-                console.error(error);
-                alert("Error making prediction.");
-            } finally {
-                btn.innerText = "Analyze Patient Data";
-                btn.classList.remove("animate-pulse");
             }
-        });
-    </script>
+
+            // 7. Inject SHAP Waterfall Image
+            const shapContainer = document.getElementById('shap-container');
+            if (data.shap_image) {
+                shapContainer.innerHTML = `<img src="data:image/png;base64,${data.shap_image}" alt="SHAP Waterfall Plot" style="width:100%; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.5);">`;
+            }
+
+            // 8. Inject Patient Snapshot Data
+            const snapshotEl = document.getElementById('patient-snapshot-content');
+            snapshotEl.innerHTML = `
+                <div style="background:rgba(15,23,42,0.6);padding:0.7rem 0.9rem;border-radius:8px;border:1px solid rgba(51,65,85,0.4);">
+                    <div style="font-size:0.68rem;color:#64748b;">Age / Gender</div>
+                    <div style="font-size:0.85rem;color:#e2e8f0;font-weight:600;">${age} yrs · ${gender === 1 ? 'Male' : 'Female'}</div>
+                </div>
+                <div style="background:rgba(15,23,42,0.6);padding:0.7rem 0.9rem;border-radius:8px;border:1px solid rgba(51,65,85,0.4);">
+                    <div style="font-size:0.68rem;color:#64748b;">MMSE Cognitive Score</div>
+                    <div style="font-size:0.85rem;color:#e2e8f0;font-weight:600;">${mmse} / 30</div>
+                </div>
+                <div style="background:rgba(15,23,42,0.6);padding:0.7rem 0.9rem;border-radius:8px;border:1px solid rgba(51,65,85,0.4);">
+                    <div style="font-size:0.68rem;color:#64748b;">Education / SES</div>
+                    <div style="font-size:0.85rem;color:#e2e8f0;font-weight:600;">Educ: ${educ}/5 · SES: ${ses}/5</div>
+                </div>
+                <div style="background:rgba(15,23,42,0.6);padding:0.7rem 0.9rem;border-radius:8px;border:1px solid rgba(51,65,85,0.4);">
+                    <div style="font-size:0.68rem;color:#64748b;">nWBV / eTIV</div>
+                    <div style="font-size:0.85rem;color:#e2e8f0;font-weight:600;">${nwbv} · ${etiv} mm³</div>
+                </div>
+            `;
+
+        } catch (err) {
+            document.getElementById('loadingOverlay').classList.remove('active');
+            alert("Error connecting to NeuroAI API. Please verify server is running on http://localhost:8000");
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            btnText.textContent = '⚡ Run Diagnostic Analysis';
+        }
+    });
+
+    // Initialize Radar
+    updateRadar();
+</script>
 </body>
 </html>

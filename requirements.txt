@@ -1,5 +1,5 @@
 fastapi
-uvicorn
+uvicorn[standard]
 jinja2
 python-multipart
 pandas
@@ -8,3 +8,4 @@ scikit-learn
 xgboost
 shap
 matplotlib
+joblib
