@@ -5,6 +5,7 @@ An end-to-end **Artificial Intelligence** clinical diagnostic microservice built
 This platform bridges classical **Ensemble Learning** algorithms with modern **Transformer-based Tabular NLP (BERT)** and cryptographic **Explainable AI (SHAP Waterfall Attribution)**, wrapped in a high-concurrency **FastAPI** backend and an interactive **two-stage clinical intelligence interface**.
 
 <p align="left">
+  <a href="https://neuroai-diagnostic-platform.onrender.com"><img src="https://img.shields.io/badge/Live%20Demo-neuroai--diagnostic--platform.onrender.com-46E3B7?style=flat&logo=render&logoColor=white" alt="Live Demo on Render" /></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=flat&logo=python" alt="Python" />
   <img src="https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Hugging%20Face-Transformers-F7931E?style=flat&logo=huggingface" alt="Transformers" />
@@ -13,6 +14,10 @@ This platform bridges classical **Ensemble Learning** algorithms with modern **T
   <img src="https://img.shields.io/badge/XGBoost-EB2626?style=flat" alt="XGBoost" />
   <a href="https://render.com/deploy?repo=https://github.com/rajatmurhe/NeuroAI-Diagnostic-Platform"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" /></a>
 </p>
+
+> 🔗 **Live Cloud Microservice:** [https://neuroai-diagnostic-platform.onrender.com](https://neuroai-diagnostic-platform.onrender.com)  
+> 📖 **Interactive Swagger Docs:** [https://neuroai-diagnostic-platform.onrender.com/docs](https://neuroai-diagnostic-platform.onrender.com/docs)  
+> 🩺 **Health Monitoring:** [https://neuroai-diagnostic-platform.onrender.com/health](https://neuroai-diagnostic-platform.onrender.com/health)
 
 ---
 
