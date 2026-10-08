@@ -11,6 +11,7 @@ This platform bridges classical **Ensemble Learning** algorithms with modern **T
   <img src="https://img.shields.io/badge/Explainable%20AI-SHAP-green?style=flat" alt="SHAP" />
   <img src="https://img.shields.io/badge/scikit--learn-F7931E?style=flat&logo=scikitlearn" alt="Scikit-Learn" />
   <img src="https://img.shields.io/badge/XGBoost-EB2626?style=flat" alt="XGBoost" />
+  <a href="https://render.com/deploy?repo=https://github.com/rajatmurhe/NeuroAI-Diagnostic-Platform"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" /></a>
 </p>
 
 ---
@@ -236,6 +237,29 @@ Interactive API documentation (Swagger UI) is accessible at:
 ```
 http://localhost:8000/docs
 ```
+
+---
+
+## 🌐 Deploy Live on Render
+
+### Option 1: One-Click Deploy (Blueprint)
+Click the button below to instantly deploy using the included `render.yaml` specification:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/rajatmurhe/NeuroAI-Diagnostic-Platform)
+
+### Option 2: Manual Web Service Setup on Render
+1. Go to [Render Dashboard](https://dashboard.render.com/) and click **New +** > **Web Service**.
+2. Select your repository: `rajatmurhe/NeuroAI-Diagnostic-Platform`.
+3. Configure the service settings:
+   - **Name**: `neuroai-diagnostic-platform`
+   - **Environment / Runtime**: `Python 3`
+   - **Build Command**: `pip install --upgrade pip && pip install -r requirements.txt`
+   - **Start Command**: `uvicorn api:app --host 0.0.0.0 --port $PORT`
+   - **Plan**: `Free`
+4. Add Environment Variables under **Advanced**:
+   - `PYTHON_VERSION`: `3.11.4`
+   - `MPLCONFIGDIR`: `/tmp/matplotlib`
+5. Click **Deploy Web Service**. Render will provision your environment and provide a public URL (e.g. `https://neuroai-diagnostic-platform.onrender.com`).
 
 ---
 
