@@ -5,19 +5,18 @@ An end-to-end **Artificial Intelligence** clinical diagnostic microservice built
 This platform bridges classical **Ensemble Learning** algorithms with modern **Transformer-based Tabular NLP (BERT)** and cryptographic **Explainable AI (SHAP Waterfall Attribution)**, wrapped in a high-concurrency **FastAPI** backend and an interactive **two-stage clinical intelligence interface**.
 
 <p align="left">
-  <a href="https://neuroai-diagnostic-platform.onrender.com"><img src="https://img.shields.io/badge/Live%20Demo-neuroai--diagnostic--platform.onrender.com-46E3B7?style=flat&logo=render&logoColor=white" alt="Live Demo on Render" /></a>
-  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=flat&logo=python" alt="Python" />
-  <img src="https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/Hugging%20Face-Transformers-F7931E?style=flat&logo=huggingface" alt="Transformers" />
-  <img src="https://img.shields.io/badge/Explainable%20AI-SHAP-green?style=flat" alt="SHAP" />
-  <img src="https://img.shields.io/badge/scikit--learn-F7931E?style=flat&logo=scikitlearn" alt="Scikit-Learn" />
-  <img src="https://img.shields.io/badge/XGBoost-EB2626?style=flat" alt="XGBoost" />
-  <a href="https://render.com/deploy?repo=https://github.com/rajatmurhe/NeuroAI-Diagnostic-Platform"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" /></a>
+  <a href="https://neuroai-diagnostic-platform.onrender.com"><img src="https://img.shields.io/badge/Live%20Platform-Active%20on%20Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" alt="Live Platform on Render" /></a>
+  <img src="https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11" />
+  <img src="https://img.shields.io/badge/FastAPI-0.126-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Hugging%20Face-BERT-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black" alt="Transformers" />
+  <img src="https://img.shields.io/badge/XAI-SHAP-00C853?style=for-the-badge" alt="SHAP" />
+  <img src="https://img.shields.io/badge/scikit--learn-1.8-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white" alt="Scikit-Learn" />
+  <img src="https://img.shields.io/badge/XGBoost-3.2-EB2626?style=for-the-badge" alt="XGBoost" />
 </p>
 
-> 🔗 **Live Cloud Microservice:** [https://neuroai-diagnostic-platform.onrender.com](https://neuroai-diagnostic-platform.onrender.com)  
-> 📖 **Interactive Swagger Docs:** [https://neuroai-diagnostic-platform.onrender.com/docs](https://neuroai-diagnostic-platform.onrender.com/docs)  
-> 🩺 **Health Monitoring:** [https://neuroai-diagnostic-platform.onrender.com/health](https://neuroai-diagnostic-platform.onrender.com/health)
+> 🌐 **Live Web Application:** [https://neuroai-diagnostic-platform.onrender.com](https://neuroai-diagnostic-platform.onrender.com)  
+> 📖 **Interactive OpenAPI Documentation:** [https://neuroai-diagnostic-platform.onrender.com/docs](https://neuroai-diagnostic-platform.onrender.com/docs)  
+> 🩺 **System Health Endpoint:** [https://neuroai-diagnostic-platform.onrender.com/health](https://neuroai-diagnostic-platform.onrender.com/health)
 
 ---
 
@@ -32,11 +31,11 @@ NeuroAI features a responsive, dark-mode glassmorphism interface engineered for 
 * Calibrated **Model Benchmarks** display showing accuracy, macro/weighted F1 metrics, and latency.
 
 <div align="center">
-  <img width="900" alt="NeuroAI Platform Hero Overview" src="photos/landing_hero.png" />
+  <img width="920" alt="NeuroAI Platform Hero Overview" src="photos/landing_hero.png" />
   <br/><br/>
-  <img width="900" alt="Patient Intake & Live Biomarker Radar" src="photos/intake_radar.png" />
+  <img width="920" alt="Patient Intake & Live Biomarker Radar" src="photos/intake_radar.png" />
   <br/><br/>
-  <img width="900" alt="Biomarker Intake Sliders & Benchmarks" src="photos/intake_benchmarks.png" />
+  <img width="920" alt="Biomarker Intake Sliders & Benchmarks" src="photos/intake_benchmarks.png" />
 </div>
 
 <br/>
@@ -49,11 +48,11 @@ NeuroAI features a responsive, dark-mode glassmorphism interface engineered for 
 * **"Run Another Analysis"** workflow enabling doctors or researchers to pivot back into intake mode instantly.
 
 <div align="center">
-  <img width="900" alt="Clinical Diagnostic Assessment Report" src="photos/diagnostic_assessment.png" />
+  <img width="920" alt="Clinical Diagnostic Assessment Report" src="photos/diagnostic_assessment.png" />
   <br/><br/>
-  <img width="900" alt="SHAP Feature Attribution Waterfall" src="photos/shap_waterfall.png" />
+  <img width="920" alt="SHAP Feature Attribution Waterfall" src="photos/shap_waterfall.png" />
   <br/><br/>
-  <img width="900" alt="Submitted Profile & Clinical Decision Support" src="photos/clinical_decision_support.png" />
+  <img width="920" alt="Submitted Profile & Clinical Decision Support" src="photos/clinical_decision_support.png" />
 </div>
 
 ---
@@ -160,10 +159,12 @@ The platform evaluates 8 multimodal patient markers:
 
 ```text
 NeuroAI-Diagnostic-Platform/
-├── api.py                     # FastAPI application & prediction endpoints
-├── requirements.txt           # Dependencies & environment specification
+├── api.py                     # FastAPI application & asynchronous prediction microservice
+├── requirements.txt           # Production environment dependencies
+├── render.yaml                # Cloud deployment configuration
+├── .python-version            # Runtime Python version specification (3.11.4)
 │
-├── data/                      # Clinical datasets
+├── data/                      # Clinical neuroimaging datasets
 │   └── oasis_cross-sectional.csv 
 │
 ├── models/                    # Serialized model weights & preprocessing artifacts
@@ -193,7 +194,7 @@ NeuroAI-Diagnostic-Platform/
 │   ├── cm_Logistic_Regression.png
 │   └── cm_SVM_RBF.png
 │
-├── src/                       # Core ML pipelines
+├── src/                       # Core ML engineering pipelines
 │   ├── preprocess.py          # Imputation, feature scaling & text serialization
 │   ├── train_baseline.py      # Ensemble & baseline model training
 │   ├── train_bert.py          # Hugging Face Trainer script for BERT
@@ -216,7 +217,7 @@ cd NeuroAI-Diagnostic-Platform
 ### 2. Environment Setup
 ```bash
 # Create virtual environment
-python -m venv venv
+python3 -m venv venv
 
 # Activate virtual environment
 # Windows:
@@ -225,6 +226,7 @@ venv\Scripts\activate
 source venv/bin/activate
 
 # Install required packages
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
@@ -245,33 +247,10 @@ http://localhost:8000/docs
 
 ---
 
-## 🌐 Deploy Live on Render
-
-### Option 1: One-Click Deploy (Blueprint)
-Click the button below to instantly deploy using the included `render.yaml` specification:
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/rajatmurhe/NeuroAI-Diagnostic-Platform)
-
-### Option 2: Manual Web Service Setup on Render
-1. Go to [Render Dashboard](https://dashboard.render.com/) and click **New +** > **Web Service**.
-2. Select your repository: `rajatmurhe/NeuroAI-Diagnostic-Platform`.
-3. Configure the service settings:
-   - **Name**: `neuroai-diagnostic-platform`
-   - **Environment / Runtime**: `Python 3`
-   - **Build Command**: `pip install --upgrade pip && pip install -r requirements.txt`
-   - **Start Command**: `uvicorn api:app --host 0.0.0.0 --port $PORT`
-   - **Plan**: `Free`
-4. Add Environment Variables under **Advanced**:
-   - `PYTHON_VERSION`: `3.11.4`
-   - `MPLCONFIGDIR`: `/tmp/matplotlib`
-5. Click **Deploy Web Service**. Render will provision your environment and provide a public URL (e.g. `https://neuroai-diagnostic-platform.onrender.com`).
-
----
-
 ## 📡 API Reference
 
 ### `POST /predict`
-Submits patient biomarker values and model choice for real-time inference.
+Submits patient biomarker values and model choice for real-time inference and SHAP attribution generation.
 
 **Request Payload:**
 ```json
@@ -293,9 +272,9 @@ Submits patient biomarker values and model choice for real-time inference.
 {
   "diagnosis": "MCI",
   "probabilities": {
-    "Healthy": 4.25,
-    "MCI": 88.50,
-    "Alzheimer": 7.25
+    "Healthy": 6.5,
+    "MCI": 59.0,
+    "Alzheimer": 34.5
   },
   "shap_image": "<base64_encoded_png_plot>",
   "model_used": "Random_Forest",
@@ -308,6 +287,43 @@ Submits patient biomarker values and model choice for real-time inference.
 }
 ```
 
+**Example `curl` Request:**
+```bash
+curl -X POST https://neuroai-diagnostic-platform.onrender.com/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Age": 74.0,
+    "Gender_Male": 1,
+    "Educ": 3.0,
+    "SES": 2.0,
+    "MMSE": 22.0,
+    "eTIV": 1450.0,
+    "nWBV": 0.71,
+    "ASF": 1.21,
+    "model": "Random_Forest"
+  }'
+```
+
+### `GET /health`
+Returns the operational status and loaded model registry.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "models_loaded": [
+    "Random_Forest",
+    "XGBoost",
+    "Logistic_Regression",
+    "SVM_RBF"
+  ],
+  "version": "2.0.0"
+}
+```
+
+### `GET /models`
+Returns metadata and benchmark scores for all available model architectures.
+
 ---
 
 ## 🛡️ Clinical Disclaimer
@@ -316,4 +332,4 @@ Submits patient biomarker values and model choice for real-time inference.
 ---
 
 ## 👤 Author
-* **Rajat Murhe** — [GitHub](https://github.com/rajatmurhe)
+* **Rajat Murhe** — [GitHub Profile](https://github.com/rajatmurhe)
